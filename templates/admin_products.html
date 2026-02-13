@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Products - MAAZ Admin</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="admin-container">
+        <aside class="admin-sidebar">
+            <div class="sidebar-header">
+                <h2>MAAZ Admin</h2>
+            </div>
+            <nav class="admin-nav">
+                <a href="/admin" class="nav-item">📊 Dashboard</a>
+                <a href="/admin/users" class="nav-item">👥 Users</a>
+                <a href="/admin/products" class="nav-item active">📦 Products</a>
+                <a href="/admin/sales" class="nav-item">💰 Sales</a>
+                <a href="/admin/announcements" class="nav-item">📢 Announcements</a>
+                <a href="/admin/logout" class="nav-item">🚪 Logout</a>
+            </nav>
+        </aside>
+
+        <main class="admin-main">
+            <header class="admin-header">
+                <h1>Manage Products</h1>
+                <button class="btn-edit" onclick="showAddProductForm()">+ Add Product</button>
+            </header>
+
+            <section class="orders-section">
+                <div class="orders-table-container">
+                    <table class="orders-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Category</th>
+                                <th>Description</th>
+                                <th>Price</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in items %}
+                            <tr>
+                                <td>{{ item.id }}</td>
+                                <td><strong>{{ item.name }}</strong></td>
+                                <td>{{ item.category }}</td>
+                                <td>{{ item.description[:30] or '-' }}...</td>
+                                <td>Rs. {{ "%.2f"|format(item.price) }}</td>
+                                <td>
+                                    {% if item.is_available %}
+                                    <span class="status-badge status-approved">Available</span>
+                                    {% else %}
+                                    <span class="status-badge status-rejected">Unavailable</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <button class="btn-edit" style="font-size: 0.8rem;" onclick="editProduct({{ item.id }})">Edit</button>
+                                    <button class="btn-edit" style="font-size: 0.8rem; background-color: #ff6b6b; margin-left: 0.5rem;" onclick="deleteProduct({{ item.id }})">Delete</button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="productModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add Product</h2>
+                <button class="close-btn" onclick="closeProductModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="productForm">
+                    <div class="form-group">
+                        <label>Product Name</label>
+                        <input type="text" id="productName" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select id="productCategory" class="form-control" required>
+                            <option value="Main Courses">Main Courses</option>
+                            <option value="Appetizers">Appetizers</option>
+                            <option value="Desserts">Desserts</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea id="productDesc" class="form-control" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Price (Rs.)</label>
+                        <input type="number" id="productPrice" class="form-control" step="0.01" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeProductModal()">Cancel</button>
+                <button class="btn-primary" onclick="saveProduct()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let editingProductId = null;
+
+        function showAddProductForm() {
+            editingProductId = null;
+            document.getElementById('productModal').classList.add('active');
+            document.getElementById('productForm').reset();
+            document.querySelector('.modal-header h2').textContent = 'Add Product';
+        }
+
+        function closeProductModal() {
+            document.getElementById('productModal').classList.remove('active');
+            document.getElementById('productForm').reset();
+            editingProductId = null;
+        }
+
+        function editProduct(id) {
+            // Fetch product details from the page
+            const row = event.target.closest('tr');
+            const cells = row.cells;
+            
+            editingProductId = id;
+            document.getElementById('productName').value = cells[1].textContent.trim();
+            document.getElementById('productCategory').value = cells[2].textContent.trim();
+            document.getElementById('productDesc').value = cells[3].textContent.replace('...', '').trim();
+            document.getElementById('productPrice').value = cells[4].textContent.replace('Rs. ', '').trim();
+            
+            document.querySelector('.modal-header h2').textContent = 'Edit Product';
+            document.getElementById('productModal').classList.add('active');
+        }
+
+        function deleteProduct(id) {
+            if (confirm('Are you sure you want to delete this product?')) {
+                fetch('/api/admin/products/' + id, { method: 'DELETE' })
+                    .then(r => r.json())
+                    .then(d => { 
+                        if(d.success) {
+                            showNotification('Product deleted successfully!');
+                            setTimeout(() => location.reload(), 1000);
+                        } else {
+                            alert('Error deleting product');
+                        }
+                    })
+                    .catch(e => alert('Error: ' + e));
+            }
+        }
+
+        function saveProduct() {
+            // Validate form
+            const name = document.getElementById('productName').value.trim();
+            const category = document.getElementById('productCategory').value;
+            const description = document.getElementById('productDesc').value.trim();
+            const price = parseFloat(document.getElementById('productPrice').value);
+
+            if (!name) {
+                alert('Please enter product name');
+                return;
+            }
+            if (!price || price <= 0) {
+                alert('Please enter a valid price');
+                return;
+            }
+
+            const data = {
+                name: name,
+                category: category,
+                description: description,
+                price: price
+            };
+
+            const url = editingProductId ? `/api/admin/products/${editingProductId}` : '/api/admin/products';
+            const method = editingProductId ? 'PUT' : 'POST';
+
+            fetch(url, {
+                method: method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(r => r.json())
+            .then(d => { 
+                if(d.success) {
+                    showNotification(editingProductId ? 'Product updated!' : 'Product added!');
+                    closeProductModal();
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    alert('Error: ' + (d.message || 'Failed to save product'));
+                }
+            })
+            .catch(e => alert('Error: ' + e));
+        }
+
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 100px;
+                right: 20px;
+                background-color: #51cf66;
+                color: white;
+                padding: 1rem 1.5rem;
+                border: 2px solid #000;
+                box-shadow: 6px 6px 0px rgba(0, 0, 0, 0.3);
+                z-index: 1000;
+                font-weight: 600;
+                font-family: 'PT Sans', sans-serif;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            setTimeout(() => notification.remove(), 3000);
+        }
+
+        window.onclick = function(e) {
+            const modal = document.getElementById('productModal');
+            if (e.target === modal) closeProductModal();
+        }
+    </script>
+</body>
+</html>

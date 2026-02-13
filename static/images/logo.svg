@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <style>
+      .brand{font-family: 'PT Sans', sans-serif; font-weight:700}
+    </style>
+  </defs>
+  <circle cx="100" cy="80" r="68" fill="#ffca28" stroke="#000" stroke-width="6"/>
+  <path d="M50 130 L70 54 L100 110 L130 54 L150 130" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="100" y="170" text-anchor="middle" class="brand" font-size="24" fill="#000">MAAZ</text>
+</svg>

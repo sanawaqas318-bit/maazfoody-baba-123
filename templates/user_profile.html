@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - MAAZ</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="header-container">
+            <div class="header-left">
+                <a href="/" class="logo">MAAZ</a>
+                <nav class="nav-links">
+                    <a href="/">Menu</a>
+                    <a href="/orders">My Orders</a>
+                </nav>
+            </div>
+            <div class="header-right">
+                <a href="/logout" class="btn-login">Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <section class="checkout-section">
+        <div class="checkout-container">
+            <div class="checkout-form">
+                <h2>Complete Your Profile</h2>
+                <p style="color: #999; margin-bottom: 2rem;">Fill in all details to enable checkout</p>
+                
+                <form method="POST" action="/profile">
+                    <div class="form-group">
+                        <label for="name">Full Name</label>
+                        <input type="text" id="name" name="name" value="{{ user.name or '' }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" value="{{ user.phone or '' }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="country">Country</label>
+                        <input type="text" id="country" name="country" value="{{ user.country or '' }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="province">Province/State</label>
+                        <input type="text" id="province" name="province" value="{{ user.province or '' }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="address">Address</label>
+                        <textarea id="address" name="address" rows="3" required>{{ user.address or '' }}</textarea>
+                    </div>
+
+                    <button type="submit" class="btn-primary btn-large">Save Profile & Continue</button>
+                </form>
+            </div>
+
+            <div class="order-summary">
+                <h3>Profile Status</h3>
+                <div style="padding: 1rem;">
+                    {% if user.profile_complete %}
+                    <p style="color: #51cf66; font-weight: 600;">✓ Profile Complete</p>
+                    {% else %}
+                    <p style="color: #ff6b6b; font-weight: 600;">⚠ Complete Profile to Checkout</p>
+                    {% endif %}
+                    <div style="margin-top: 1.5rem; border-top: 2px solid #000; padding-top: 1rem;">
+                        <p><strong>Email:</strong> {{ user.email }}</p>
+                        <p><strong>Name:</strong> {{ user.name or 'Not set' }}</p>
+                        <p><strong>Phone:</strong> {{ user.phone or 'Not set' }}</p>
+                        <p><strong>Country:</strong> {{ user.country or 'Not set' }}</p>
+                        <p><strong>Province:</strong> {{ user.province or 'Not set' }}</p>
+                        <p><strong>Address:</strong> {{ user.address or 'Not set' }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

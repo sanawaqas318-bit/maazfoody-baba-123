@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Sales - MAAZ Admin</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="admin-container">
+        <aside class="admin-sidebar">
+            <div class="sidebar-header">
+                <h2>MAAZ Admin</h2>
+            </div>
+            <nav class="admin-nav">
+                <a href="/admin" class="nav-item">📊 Dashboard</a>
+                <a href="/admin/users" class="nav-item">👥 Users</a>
+                <a href="/admin/products" class="nav-item">📦 Products</a>
+                <a href="/admin/sales" class="nav-item active">💰 Sales</a>
+                <a href="/admin/announcements" class="nav-item">📢 Announcements</a>
+                <a href="/admin/logout" class="nav-item">🚪 Logout</a>
+            </nav>
+        </aside>
+
+        <main class="admin-main">
+            <header class="admin-header">
+                <h1>Sales Management</h1>
+                <div class="admin-user">All Orders & Revenue</div>
+            </header>
+
+            <div class="admin-stats">
+                <div class="stat-card">
+                    <h3>Total Revenue</h3>
+                    <p class="stat-value" id="totalRevenue">Rs. 0.00</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Total Orders</h3>
+                    <p class="stat-value" id="totalOrders">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Avg. Order Value</h3>
+                    <p class="stat-value" id="avgOrder">Rs. 0.00</p>
+                </div>
+            </div>
+
+            <section class="orders-section">
+                <h2>Order Sales</h2>
+                <div class="orders-table-container">
+                    <table class="orders-table">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Customer</th>
+                                <th>Items</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in orders %}
+                            <tr>
+                                <td><strong>{{ order.order_id }}</strong></td>
+                                <td>{{ order.customer_name }}</td>
+                                <td>{{ order.items|length }} items</td>
+                                <td><strong>Rs. {{ "%.2f"|format(order.total_price) }}</strong></td>
+                                <td>
+                                    <span class="status-badge status-{{ order.order_status }}">
+                                        {{ order.order_status.upper() }}
+                                    </span>
+                                </td>
+                                <td>{{ order.created_at.strftime('%Y-%m-%d') }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        async function loadSalesData() {
+            const response = await fetch('/api/admin/stats');
+            const data = await response.json();
+            
+            document.getElementById('totalRevenue').textContent = 'Rs. ' + data.total_revenue.toFixed(2);
+            document.getElementById('totalOrders').textContent = data.total_orders;
+            const avgOrder = data.total_orders > 0 ? data.total_revenue / data.total_orders : 0;
+            document.getElementById('avgOrder').textContent = 'Rs. ' + avgOrder.toFixed(2);
+        }
+
+        document.addEventListener('DOMContentLoaded', loadSalesData);
+    </script>
+</body>
+</html>

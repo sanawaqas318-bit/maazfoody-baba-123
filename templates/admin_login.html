@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - MAAZ</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-box">
+            <h1>MAAZ Admin</h1>
+            <p>Login to your account</p>
+
+            {% if error %}
+            <div class="alert alert-error">{{ error }}</div>
+            {% endif %}
+
+            <form method="POST" action="/admin/login" id="loginForm" onsubmit="return validateLoginForm()">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" placeholder="Enter username" required>
+                    <small id="usernameError" style="color: #ff6b6b; display: none;"></small>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Enter password" required>
+                    <small id="passwordError" style="color: #ff6b6b; display: none;"></small>
+                </div>
+
+                <button type="submit" class="btn-primary btn-large">Login</button>
+            </form>
+
+            <p class="auth-link">Don't have an account? <a href="/admin/register">Register here</a></p>
+        </div>
+    </div>
+
+    <script>
+        function validateLoginForm() {
+            let isValid = true;
+            
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            
+            // Clear errors
+            document.querySelectorAll('small[id*="Error"]').forEach(el => el.style.display = 'none');
+            
+            if (!username) {
+                document.getElementById('usernameError').textContent = 'Please enter username';
+                document.getElementById('usernameError').style.display = 'block';
+                isValid = false;
+            }
+            
+            if (!password) {
+                document.getElementById('passwordError').textContent = 'Please enter password';
+                document.getElementById('passwordError').style.display = 'block';
+                isValid = false;
+            }
+            
+            return isValid;
+        }
+    </script>
+</body>
+</html>

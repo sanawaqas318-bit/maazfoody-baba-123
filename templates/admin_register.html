@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Register - MAAZ</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-box">
+            <h1>MAAZ Admin</h1>
+            <p>Register admin account</p>
+
+            {% if error %}
+            <div class="alert alert-error">{{ error }}</div>
+            {% endif %}
+
+            <form method="POST" action="/admin/register" id="registerForm" onsubmit="return validateRegisterForm()">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" placeholder="Enter username" minlength="3" required>
+                    <small id="usernameError" style="color: #ff6b6b; display: none;"></small>
+                </div>
+
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" name="name" placeholder="Enter your full name" required>
+                    <small id="nameError" style="color: #ff6b6b; display: none;"></small>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email (Authorized Email Only)</label>
+                    <input type="email" id="email" name="email" placeholder="admin@example.com" required>
+                    <small id="emailError" style="color: #ff6b6b; display: none;"></small>
+                    <small style="display: block; margin-top: 0.5rem; color: #666;">
+                        ✓ arham.waqasahmed@gmail.com<br>
+                        ✓ mnaeel381@gmail.com
+                    </small>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Enter password" minlength="6" required>
+                    <small id="passwordError" style="color: #ff6b6b; display: none;"></small>
+                </div>
+
+                <button type="submit" class="btn-primary btn-large">Register</button>
+            </form>
+
+            <p class="auth-link">Already have an account? <a href="/admin/login">Login here</a></p>
+        </div>
+    </div>
+
+    <script>
+        function validateRegisterForm() {
+            let isValid = true;
+            
+            const username = document.getElementById('username').value.trim();
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            
+            // Clear errors
+            document.querySelectorAll('small[id*="Error"]').forEach(el => el.style.display = 'none');
+            
+            if (username.length < 3) {
+                document.getElementById('usernameError').textContent = 'Username must be at least 3 characters';
+                document.getElementById('usernameError').style.display = 'block';
+                isValid = false;
+            }
+            
+            if (name.length < 2) {
+                document.getElementById('nameError').textContent = 'Please enter a valid full name';
+                document.getElementById('nameError').style.display = 'block';
+                isValid = false;
+            }
+            
+            if (password.length < 6) {
+                document.getElementById('passwordError').textContent = 'Password must be at least 6 characters';
+                document.getElementById('passwordError').style.display = 'block';
+                isValid = false;
+            }
+            
+            if (!email.includes('@')) {
+                document.getElementById('emailError').textContent = 'Please enter a valid email address';
+                document.getElementById('emailError').style.display = 'block';
+                isValid = false;
+            }
+            
+            return isValid;
+        }
+    </script>
+</body>
+</html>

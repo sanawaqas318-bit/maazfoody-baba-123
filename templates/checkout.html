@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - MAAZ</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="header-container">
+            <div class="header-left">
+                <a href="/" class="logo">MAAZ</a>
+            </div>
+            <div class="header-right">
+                <button class="btn-login" onclick="window.location.href='/'">Back to Menu</button>
+            </div>
+        </div>
+    </header>
+
+    <section class="checkout-section">
+        <div class="checkout-container">
+            {% if user %}
+            <script id="user-data-json" type="application/json">{{ {
+                'name': user.name or '',
+                'email': user.email or '',
+                'phone': user.phone or '',
+                'address': user.address or '',
+                'city': user.province or ''
+            } | tojson }}</script>
+            {% endif %}
+            <div class="checkout-form">
+                <h2>Checkout</h2>
+                
+                <form id="checkout-form">
+                    <div class="form-group">
+                        <label for="name">Full Name</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="address">Address</label>
+                        <textarea id="address" name="address" rows="3" required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="city">City</label>
+                        <input type="text" id="city" name="city" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="notes">Special Instructions (Optional)</label>
+                        <textarea id="notes" name="notes" rows="3"></textarea>
+                    </div>
+
+                    <button type="submit" class="btn-primary btn-large">Place Order</button>
+                </form>
+            </div>
+
+            <div class="order-summary">
+                <h3>Order Summary</h3>
+                <div id="order-items" class="order-items">
+                    <!-- Items will be loaded here -->
+                </div>
+                <div class="order-total">
+                    <strong>Total: Rs. <span id="order-total">0.00</span></strong>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="{{ url_for('static', filename='js/checkout.js') }}"></script>
+</body>
+</html>

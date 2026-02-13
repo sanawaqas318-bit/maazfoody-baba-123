@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Details - MAAZ</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="header-container">
+            <div class="header-left">
+                <a href="/" class="logo">MAAZ</a>
+            </div>
+            <div class="header-right">
+                <a href="/logout" class="btn-login">Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <section class="checkout-section">
+        <div class="container">
+            <h2 style="display: block; margin-bottom: 2rem;">Order #{{ order.order_id }}</h2>
+            
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;">
+                <div style="background-color: #fff; border: 2px solid #000; padding: 2rem; box-shadow: 6px 6px 0 rgba(0,0,0,0.3);">
+                    <h3 style="border-bottom: 2px solid #000; padding-bottom: 1rem; margin-bottom: 1rem;">Order Items</h3>
+                    
+                    {% for item in order.items %}
+                    <div style="display: flex; justify-content: space-between; padding: 1rem 0; border-bottom: 1px solid #e0e0e0;">
+                        <div>
+                            <p style="font-weight: 600;">{{ item.name }}</p>
+                            <p style="color: #999; font-size: 0.9rem;">Qty: {{ item.quantity }}</p>
+                        </div>
+                        <p style="font-weight: 600;">Rs. {{ "%.2f"|format(item.price * item.quantity) }}</p>
+                    </div>
+                    {% endfor %}
+                    
+                    <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 2px solid #000;">
+                        <p style="display: flex; justify-content: space-between; font-size: 1.2rem; font-weight: 700;">
+                            <span>Total:</span>
+                            <span>Rs. {{ "%.2f"|format(order.total_price) }}</span>
+                        </p>
+                    </div>
+                </div>
+
+                <div style="background-color: #f5f5f5; border: 2px solid #000; padding: 2rem; box-shadow: 6px 6px 0 rgba(0,0,0,0.3);">
+                    <h3 style="border-bottom: 2px solid #000; padding-bottom: 1rem; margin-bottom: 1rem;">Tracking Info</h3>
+                    
+                    <div style="margin-bottom: 1.5rem;">
+                        <p style="font-size: 0.85rem; color: #999;">ORDER STATUS</p>
+                        <p style="font-size: 1.2rem; font-weight: 600; text-transform: uppercase;">{{ order.order_status }}</p>
+                    </div>
+
+                    <div style="margin-bottom: 1.5rem;">
+                        <p style="font-size: 0.85rem; color: #999;">TRACKING</p>
+                        <p style="font-size: 1.1rem; font-weight: 600;">{{ order.tracking_status }}</p>
+                    </div>
+
+                    <div style="margin-bottom: 1.5rem;">
+                        <p style="font-size: 0.85rem; color: #999;">ORDERED ON</p>
+                        <p style="font-size: 1rem;">{{ order.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+                    </div>
+
+                    {% if order.notes %}
+                    <div style="background-color: #fff; border: 2px solid #000; padding: 1rem; margin-top: 1rem;">
+                        <p style="font-size: 0.85rem; color: #999; margin-bottom: 0.5rem;">NOTES</p>
+                        <p>{{ order.notes }}</p>
+                    </div>
+                    {% endif %}
+
+                    <div style="margin-top: 2rem;">
+                        <a href="/orders" class="btn-primary" style="display: block; text-align: center; padding: 1rem; text-decoration: none;">Back to Orders</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

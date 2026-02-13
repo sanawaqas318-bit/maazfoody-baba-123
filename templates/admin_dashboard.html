@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - MAAZ</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="admin-container">
+        <aside class="admin-sidebar">
+            <div class="sidebar-header">
+                <h2>MAAZ Admin</h2>
+            </div>
+            <nav class="admin-nav">
+                <a href="/admin" class="nav-item active">📊 Dashboard</a>
+                <a href="/admin/users" class="nav-item">👥 Users</a>
+                <a href="/admin/products" class="nav-item">📦 Products</a>
+                <a href="/admin/sales" class="nav-item">💰 Sales</a>
+                <a href="/admin/announcements" class="nav-item">📢 Announcements</a>
+                <a href="/admin/logout" class="nav-item">🚪 Logout</a>
+            </nav>
+        </aside>
+
+        <main class="admin-main">
+            <header class="admin-header">
+                <div class="header-left">
+                    <h1>📊 Admin Dashboard</h1>
+                    <p class="header-subtitle">Welcome back, {% if admin %}{{ admin.name }}{% endif %}! Here's your business overview.</p>
+                </div>
+                <div class="admin-user">
+                    <span class="user-icon">👤</span>
+                    <span>{{ admin.name if admin else 'Admin' }}</span>
+                </div>
+            </header>
+
+            <!-- Quick Stats Section -->
+            <div class="dashboard-section">
+                <h2 class="section-title">📈 Key Metrics</h2>
+                <div class="admin-stats">
+                    <div class="stat-card">
+                        <div class="stat-icon">📦</div>
+                        <h3>Total Orders</h3>
+                        <p class="stat-value" id="stat-total">0</p>
+                        <p class="stat-change" id="stat-change-total">All time</p>
+                    </div>
+                    <div class="stat-card stat-warning">
+                        <div class="stat-icon">⏳</div>
+                        <h3>Pending Orders</h3>
+                        <p class="stat-value pending" id="stat-pending">0</p>
+                        <p class="stat-change">Waiting action</p>
+                    </div>
+                    <div class="stat-card stat-success">
+                        <div class="stat-icon">✅</div>
+                        <h3>Approved Orders</h3>
+                        <p class="stat-value approved" id="stat-approved">0</p>
+                        <p class="stat-change">In progress</p>
+                    </div>
+                    <div class="stat-card stat-danger">
+                        <div class="stat-icon">❌</div>
+                        <h3>Rejected Orders</h3>
+                        <p class="stat-value rejected" id="stat-rejected">0</p>
+                        <p class="stat-change">Canceled</p>
+                    </div>
+                    <div class="stat-card stat-info">
+                        <div class="stat-icon">💰</div>
+                        <h3>Total Revenue</h3>
+                        <p class="stat-value" id="stat-revenue">Rs. 0.00</p>
+                        <p class="stat-change">Earnings</p>
+                    </div>
+                    <div class="stat-card stat-info">
+                        <div class="stat-icon">👥</div>
+                        <h3>Total Users</h3>
+                        <p class="stat-value" id="stat-users">0</p>
+                        <p class="stat-change">Customers</p>
+                    </div>
+                </div>
+            </div>
+
+            <section class="orders-section">
+                <div class="section-header">
+                    <h2>📋 Recent Orders</h2>
+                    <div class="section-actions">
+                        <input type="text" id="searchOrders" placeholder="🔍 Search by Order ID or Customer..." class="search-box">
+                        <button onclick="refreshOrders()" class="btn-edit" style="background-color: #ffca28;">🔄 Refresh</button>
+                    </div>
+                </div>
+                <div class="orders-table-container">
+                    <table class="orders-table">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Customer</th>
+                                <th>Phone</th>
+                                <th>Items</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                                <th>Tracking</th>
+                                <th>Date</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orders-body">
+                            <tr><td colspan="9" style="text-align: center; padding: 2rem; color: #999;">Loading orders...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal for updating order status -->
+    <div id="status-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Update Order</h2>
+                <button class="close-btn" onclick="closeStatusModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="modal-order-id"></p>
+                <div class="form-group">
+                    <label>Order Status</label>
+                    <select id="status-select" class="form-control">
+                        <option value="pending">Pending</option>
+                        <option value="approved">Approved</option>
+                        <option value="rejected">Rejected</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Tracking Status</label>
+                    <select id="tracking-select" class="form-control">
+                        <option value="Order Confirmed">Order Confirmed</option>
+                        <option value="Preparing">Preparing</option>
+                        <option value="Ready for Pickup">Ready for Pickup</option>
+                        <option value="Out for Delivery">Out for Delivery</option>
+                        <option value="Delivered">Delivered</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeStatusModal()">Cancel</button>
+                <button class="btn-primary" onclick="updateOrderStatus()">Update</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+</body>
+</html>

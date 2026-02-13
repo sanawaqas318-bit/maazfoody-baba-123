@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Users - MAAZ Admin</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="admin-container">
+        <aside class="admin-sidebar">
+            <div class="sidebar-header">
+                <h2>MAAZ Admin</h2>
+            </div>
+            <nav class="admin-nav">
+                <a href="/admin" class="nav-item">📊 Dashboard</a>
+                <a href="/admin/users" class="nav-item active">👥 Users</a>
+                <a href="/admin/products" class="nav-item">📦 Products</a>
+                <a href="/admin/sales" class="nav-item">💰 Sales</a>
+                <a href="/admin/announcements" class="nav-item">📢 Announcements</a>
+                <a href="/admin/logout" class="nav-item">🚪 Logout</a>
+            </nav>
+        </aside>
+
+        <main class="admin-main">
+            <header class="admin-header">
+                <h1>Manage Users</h1>
+                <div class="admin-user">Total: {{ users|length }} users</div>
+            </header>
+
+            <section class="orders-section">
+                <div class="orders-table-container">
+                    <table class="orders-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Email</th>
+                                <th>Name</th>
+                                <th>Phone</th>
+                                <th>Country</th>
+                                <th>Province</th>
+                                <th>Profile</th>
+                                <th>Joined</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in users %}
+                            <tr>
+                                <td>{{ user.id }}</td>
+                                <td>{{ user.email }}</td>
+                                <td>{{ user.name or '-' }}</td>
+                                <td>{{ user.phone or '-' }}</td>
+                                <td>{{ user.country or '-' }}</td>
+                                <td>{{ user.province or '-' }}</td>
+                                <td>
+                                    {% if user.profile_complete %}
+                                    <span class="status-badge status-approved">Complete</span>
+                                    {% else %}
+                                    <span class="status-badge status-pending">Incomplete</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ user.created_at.strftime('%Y-%m-%d') }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+</html>

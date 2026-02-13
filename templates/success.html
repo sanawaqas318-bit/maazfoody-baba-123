@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Successful - MAAZ</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="header-container">
+            <div class="header-left">
+                <a href="/" class="logo">MAAZ</a>
+            </div>
+        </div>
+    </header>
+
+    <section class="success-section">
+        <div class="success-container">
+            <div class="success-icon">✓</div>
+            <h1>Order Placed Successfully!</h1>
+            <p>Your delicious meal will be delivered soon.</p>
+            
+            <div class="order-details">
+                <p>Order ID: <strong id="order-id">-</strong></p>
+                <p>Estimated Delivery: 30-45 minutes</p>
+            </div>
+
+            <button class="btn-primary btn-large" onclick="window.location.href='/'">Back to Home</button>
+        </div>
+    </section>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const orderId = urlParams.get('order_id');
+        if (orderId) {
+            document.getElementById('order-id').textContent = orderId;
+        }
+    </script>
+</body>
+</html>
